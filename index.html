@@ -9,28 +9,67 @@
 
     <script>
       let trailingResult = 0;
+        let operationOptions = ['decimal', 'divide', 'multiply', 'subtract', 'add'];
+        let workingOperation = "";
 
       function updateDisplay(input) {
         let display = document.getElementById("display");
-       
-        if (display.innerHTML === "0") {
+        let secondaryDisplay = document.getElementById("secondaryDisplay");
+        
+        
+        if (display.innerHTML === "0" && operationOptions.indexOf(input) === -1) {
           display.innerHTML = input;
-        } else if (input === "add") {
-          trailingResult = display.innerHTML
-          display.innerHTML = 0;
+        } else if (operationOptions.indexOf(input) >= 0) {
+          console.log("dealing with a operation");
+          
+          if (workingOperation === "") {
+            // Dealing with an initial operation.
+            workingOperation = input;
+            trailingResult = display.innerHTML;
+            display.innerHTML = 0; 
+          } else {
+            // Dealing with an set operation.
+            workingOperation = input;
+            trailingResult = calculate(trailingResult, display.innerHTML, workingOperation);
+            secondaryDisplay.innerHTML = trailingResult;
+            display.innerHTML = 0;
+          }
         } else if (input === "equals") {
-          console.log(trailingResult, "<= trailingResult", display.innerHTML," <= display.innerHTML");
-          display.innerHTML = trailingResult + display.innerHTML;
+          display.innerHTML = calculate(trailingResult, display.innerHTML, workingOperation);
           trailingResult = display.innerHTML;
         } else {
-        display.innerHTML += input;
-      }
-      console.log(trailingResult,"<= trailingResult");
+          display.innerHTML += input;
+        }
+        console.log(trailingResult, "<= trailingResult", display.innerHTML," <= display.innerHTML", workingOperation, "<= workingOperation");
+
     }
 
       function clearDisplay() {
         let display = document.getElementById("display");
         display.innerHTML = 0;
+      }
+
+      function calculate(firstNumber, secondNumber, operation) {
+        let result;
+        firstNumber = parseFloat(firstNumber);
+        secondNumber = parseFloat(secondNumber);
+        switch(operation) {
+          case "add":
+          result = firstNumber + secondNumber;
+          break;
+        case "subtract":
+          result = firstNumber - secondNumber;
+          break;
+        case "multiply":
+          result = firstNumber * secondNumber;
+          break;
+        case "divide":
+          result = firstNumber / secondNumber;
+          break;
+        default:
+          console.log("Calculate switch statment missed something");
+        }
+        return result.toString();
       }
     </script>
   </head>
@@ -45,6 +84,7 @@
 
     <div class="row text-center">
       <div class="col">
+      <div id="SecondaryDisplay" class="bg-secondary text-white my-3 py-5">0</div>
       <div id="display" class="bg-info text-white my-3 py-5">0</div>
     </div>
   </div>
